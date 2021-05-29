@@ -1,12 +1,11 @@
 "use strict";
 
-
 const getDiceElement = () => document.querySelector(".dice");
 
 const hideImage = () => {
   const dice = getDiceElement();
   dice.classList.add("hidden");
-}
+};
 
 hideImage();
 
@@ -27,9 +26,7 @@ const isValueEqualsOne = (rnd) => rnd === 1;
 const getCurretPlayersScore = (player) =>
   player.querySelector(".current-score");
 
-const hasSelector = (elem, selector) =>
-  elem.classList.contains(selector);
-  
+const hasSelector = (elem, selector) => elem.classList.contains(selector);
 
 const removeSelector = (elem, selector) => elem.classList.remove(selector);
 
