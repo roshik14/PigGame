@@ -1,6 +1,14 @@
 "use strict";
-const dice = document.querySelector(".dice");
-dice.classList.add("hidden");
+
+
+const getDiceElement = () => document.querySelector(".dice");
+
+const hideImage = () => {
+  const dice = getDiceElement();
+  dice.classList.add("hidden");
+}
+
+hideImage();
 
 const btnRoll = document.querySelector(".btn--roll");
 const btnHold = document.querySelector(".btn--hold");
@@ -18,6 +26,14 @@ const isValueEqualsOne = (rnd) => rnd === 1;
 
 const getCurretPlayersScore = (player) =>
   player.querySelector(".current-score");
+
+const hasSelector = (elem, selector) =>
+  elem.classList.contains(selector);
+  
+
+const removeSelector = (elem, selector) => elem.classList.remove(selector);
+
+const addSelector = (elem, selector) => elem.classList.add(selector);
 
 const disableButtons = (...btns) =>
   btns.forEach((btn) => {
@@ -37,17 +53,17 @@ const switchCurrentPlayer = (score) => {
   playerPoints = 0;
   score.textContent = "0";
   players.forEach((player) => {
-    if (player.classList.contains("player--active")) {
-      player.classList.remove("player--active");
+    if (hasSelector(player, "player--active")) {
+      removeSelector(player, "player--active");
     } else {
-      player.classList.add("player--active");
+      addSelector(player, "player--active");
     }
   });
 };
 
 const getCurrentPlayer = () => {
   const filtered = players.filter((player) =>
-    player.classList.contains("player--active")
+    hasSelector(player, "player--active")
   );
   const currentPlayer = filtered[0];
   return currentPlayer;
@@ -60,28 +76,27 @@ const changePlayerOrNot = (rnd, score) => {
 };
 
 const checkCurrentPoints = (rnd) => {
-  const currentPlayer = getCurrentPlayer();
-  const score = getCurretPlayersScore(currentPlayer);
+  const score = getCurretPlayersScore(getCurrentPlayer());
 
   changePlayerOrNot(rnd, score);
 
   score.textContent = playerPoints;
 };
 
-const showImage = (rnd) => {
+const showImage = (dice, rnd) => {
   dice.src = setRandomImage(rnd);
-  dice.classList.remove("hidden");
+  removeSelector(dice, "hidden");
 };
 
-const addPoints = (rnd) => {
+const addPointsToCurrentScore = (rnd) => {
   playerPoints += rnd;
   checkCurrentPoints(rnd);
 };
 
 const rollDice = () => {
   const rnd = getRandomValue();
-  showImage(rnd);
-  addPoints(rnd);
+  showImage(getDiceElement(), rnd);
+  addPointsToCurrentScore(rnd);
 };
 
 btnRoll.addEventListener("click", rollDice);
@@ -90,15 +105,14 @@ const hasWinner = (playerScore, firstPlayerPoints, secondPlayerPoints) => {
   if (firstPlayerPoints >= 100 || secondPlayerPoints >= 100) {
     playerScore.textContent = "WINNER!";
     disableButtons(btnRoll, btnHold);
-    const player = getCurrentPlayer();
-    player.classList.add("player--winner");
+    addSelector(getCurrentPlayer(), "player--winner");
     return true;
   }
   return false;
 };
 
 const savePlayersPoints = (currentPlayer, playersScore) => {
-  if (currentPlayer.classList.contains("player--0")) {
+  if (hasSelector(currentPlayer, "player--0")) {
     firstPlayerPoints += playerPoints;
     playersScore.textContent = firstPlayerPoints;
   } else {
@@ -124,12 +138,12 @@ btnHold.addEventListener("click", holdPoints);
 
 const setStartingPlayer = () => {
   players.forEach((player) => {
-    if (player.classList.contains("player--active")) {
-      player.classList.remove("player--active");
+    if (hasSelector(player, "player--active")) {
+      removeSelector(player, "player--active");
     }
-    player.classList.remove("player--winner");
+    removeSelector(player, "player--winner");
   });
-  players[0].classList.add("player--active");
+  addSelector(players[0], "player--active");
 };
 
 const clearSavedScores = () => {
@@ -156,7 +170,7 @@ const startNewGame = () => {
   activateButtons(btnRoll, btnHold);
   setStartingPlayer();
 
-  dice.src = "assets/dice-5.png";
+  getDiceElement().src = "assets/dice-5.png";
 };
 
 btnNew.addEventListener("click", startNewGame);
